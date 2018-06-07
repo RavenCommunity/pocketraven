@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>Pocket Raven Web Wallet</title>
+
+    
+    <meta name="keywords" content="Raven, Ravencoin, bitcoin, wallet, multisig, multisignature, address, browser, javascript, js, transaction, verify, decode">
+    <meta name="description" content="A Ravencoin Web Wallet written in Javascript. Supports Multisig, Custom Transactions, nLockTime and more!">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A secure web-based wallet for Ravencoin.">
+    <meta property="og:image" content="/images/pr2.png" />
+    <meta property="og:site_name" content="Pocket Raven Web Wallet" />
+    <meta property="og:title" content="Pocket Raven Web Wallet" />
+    <meta property="og:description" content="A secure web-based wallet for Ravencoin." />
+    <meta name="author" content="Traysi Hylian">
+
+
+    <link rel="shortcut icon" type="image/png" href="/images/pr2.png">
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen">
+    <link rel="stylesheet" href="/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="/css/style.css" media="screen">
+    
+    <script type="text/javascript" src="/js/rmt/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="/js/rmt/moment.min.js"></script>
+    <script type="text/javascript" src="/js/rmt/transition.js"></script>
+    <script type="text/javascript" src="/js/rmt/collapse.js"></script>
+    <script type="text/javascript" src="/js/rmt/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/rmt/bootstrap-datetimepicker.min.js"></script>
+
+    <script type="text/javascript" src="/js/crypt/crypto-min.js"></script>
+    <script type="text/javascript" src="/js/crypt/crypto-sha256.js"></script>
+    <script type="text/javascript" src="/js/crypt/crypto-sha256-hmac.js"></script>
+    <script type="text/javascript" src="/js/crypt/sha512.js"></script>
+    <script type="text/javascript" src="/js/crypt/ripemd160.js"></script>
+    <script type="text/javascript" src="/js/crypt/aes.js"></script>
+    <script type="text/javascript" src="/js/crypt/jsbn.js"></script>
+    <script type="text/javascript" src="/js/crypt/ellipticcurve.js"></script>
+
+    <script type="text/javascript" src="/js/qr/qrcode.js"></script>
+    <script type="text/javascript" src="/js/qr/qcode-decoder.min.js"></script>
+
+    <script type="text/javascript" src="/js/coin.js"></script>
+    <script type="text/javascript" src="/js/coinbin.js"></script>
+  </head>
+
+  <body class="">
+    <div id="wrap">
+      <!-- Fixed navbar -->
+      <div id="header" class="navbar navbar-default " role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+<a href="/#home"><img src="/images/pr2.png" style="height:50px;padding:4px;"></A>
+<a class="navbar-brand" href="/#home">Pocket Raven Web Wallet</a>
+
+            <!-- <a href="#home" class="navbar-brand" id="homeBtn"><img src="/images/pr2.png" style="height:43px;margin-top:-13px"></a> -->
+          </div>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="#wallet" data-toggle="tab" aria-expanded="false"><span class="glyphicon glyphicon-briefcase"></span> Wallet</a></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="glyphicon glyphicon-plus"></span> New<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li class=""><a href="#newAddress" data-toggle="tab" aria-expanded="false">Address</a></li>
+                  <li class=""><a href="#newMultiSig" data-toggle="tab" aria-expanded="false">MultiSig Address</a></li>
+                  <li><a href="#newTimeLocked" data-toggle="tab" aria-expanded="false">Time Locked Address</a></li>
+                  <li><a href="#newHDaddress" data-toggle="tab" aria-expanded="false">HD Address</a></li>
+                  <li class="divider"></li>
+                  <li><a href="#newTransaction" data-toggle="tab" aria-expanded="false">Transaction</a></li>
+                </ul>
+              </li>
+              <li class=""><a href="#verify" data-toggle="tab" aria-expanded="false"><span class="glyphicon glyphicon-ok"></span> Verify</a></li>
+              <li class=""><a href="#sign" data-toggle="tab" aria-expanded="false"><span class="glyphicon glyphicon-pencil"></span> Sign</a></li>
+              <li class=""><a href="#broadcast" data-toggle="tab" aria-expanded="false"><span class="glyphicon glyphicon-globe"></span> Broadcast</a></li>
+              <!-- <li class=""><a href="#about" data-toggle="tab" aria-expanded="true"><span class="glyphicon glyphicon-info-sign"></span> About</a></li> -->
+              <li class=""><a href="#help" data-toggle="tab" aria-expanded="true"><span class="glyphicon glyphicon-info-sign"></span> FAQ</a></li>
+
+              <li class="hidden"><a href="#settings" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="content" class="container">
+        <noscript class="alert alert-danger center-block"><span class="glyphicon glyphicon-exclamation-sign"></span> This page uses javascript, please enable it to continue!</noscript>
+
+        <div class="tab-content">
+          <div class="tab-pane tab-content active" id="home">
+            <div class="jumbotron">
+<img src="/images/Ravencoin_Bird_clear.png" style="max-height:100px;" align="left">
+              <h1>Pocket Raven - Web Wallet for Ravencoin</h1>
+              <p>Be your own bank, take control of your own money and start using Ravencoin today! This web wallet gives you 100% control and privacy over your keys and transactions. We never see or store your keys - only you do! This service uses CloudFlare with Full SSL - encrypted from our server to Cloudflare, then encrypted from CloudFlare to you.</p>
+<P>
+<B>Important note for existing users:</B> This service replaces our old web wallet. If you have an account at the old system, you can still access it at <a href="https://pi.pocketraven.com/">this web address</a>. Please move your funds from the old wallet to the new one soon.
+<P>
+              <a class="btn btn-primary btn-lg" href="#help" role="button">FAQ &raquo;</a>
+              <a class="btn btn-primary btn-lg" href="#wallet" role="button">Open a Wallet &raquo;</a>
+              </p>
+            </div>
+
+            <hr>
+
+            <div class="row">
+              <div class="col-md-4">
+                <h3><span class="glyphicon glyphicon-eye-open"></span> Open Source</h3>
+                <p>This is an open source web based wallet written in javascript and released under the MIT license which means it's free to use and edit.</p>
+              </div>
+
+              <div class="col-md-4">
+                <h3><span class="glyphicon glyphicon-fullscreen"></span> MultiSig</h3>
+                <p>We offer a fully transparent <a href="#newMultiSig">multisig</a> solution which works seamlessly offline and with other Ravencoin clients.</p>
+              </div>
+
+              <div class="col-md-4">
+                <h3><span class="glyphicon glyphicon-transfer"></span> Raw Transactions</h3>
+                <p><a href="#newTransaction">Create</a>, <a href="#verify">verify</a>, <a href="#sign">sign</a> and <a href="#broadcast">broadcast</a> custom raw transactions online with advanced features and minimal effort!</p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4">
+                <h3><span class="glyphicon glyphicon-piggy-bank"></span> Wallet</h3>
+                <p>Quick access to an <a href="#wallet">online wallet</a> where only you have access to your own private keys.</p>
+              </div>
+
+              <div class="col-md-4">
+                <h3><span class="glyphicon glyphicon-globe"></span> Addresses</h3>
+                <p>We support <a href="#newAddress">regular addresses</a> and <a href="#newMultiSig">multisig</a> with access to your own private keys!</p>
+              </div>
+
+              <div class="col-md-4">
+                <h3><span class="glyphicon glyphicon-heart"></span>  Ravencoin Community</h3>
+                <p>We have been a part of the Ravencoin community since the beginning. To contact us for support, tag us @traysi on Ravencoin's discord, or email link@traysi.org.</p>
+              </div>
+            </div>
+<P>
+          <div class="panel panel-primary"><div class="panel-heading">Use with confidence</div><div class="panel-body">This website uses javascript to generate your addresses and sign your transactions within your browser, which means we <i>never</i> receive or see your private keys. This can be independently verified by reviewing the source code of this page, along with all the accompanying javascript files. Use with confidence! But be aware that your browser might cache and store key information to your local hard disk. Malware running on your machine might be able to steal your information. Please be smart about key security.</div></div>
+          </div>
+
+          <div class="tab-pane tab-content" id="wallet">
+            <div class="row">
+              <div class="col-md-12">
+                <h2>Wallet Service</h2>
+                <div id="openLogin">
+                  <form class="form-signin" role="form" action="javascript:;">
+
+                    <p>Use the form below create a new wallet, or to log into an existing one. *</p>
+
+Username: <input id="openUsername" type="text" class="form-control" placeholder="Username" required="" autofocus="" data-original-title="" title=""><BR>
+Password: <input id="openPass" type="password" class="form-control" placeholder="Password" required="" data-original-title="" title=""><BR>
+Password: <input id="openPassConfirm" type="password" class="form-control" placeholder="Password confirm" required="" data-original-title="" title="">
+                    <br>
+
+                    <div id="openLoginStatus" class="alert alert-danger hidden"></div>
+                    <button id="openBtn" class="btn btn-primary" type="submit">Submit</button>
+                  </form>
+
+                  <P>
+<div class="panel panel-default">
+  <div class="panel-heading">* An explanation for how this works:</div>
+  <div class="panel-body">
+
+This page creates a new wallet for you. You will get a receive address and some functionality that lets you send coins back out from this address, and view the history of any transactions related to this wallet.
+<br><br>
+The wallet is created based on <u>the combination</u> of the username and password you enter above. This means you can create multiple wallets with the same username but different password. We do not store or even see your login credentials in any way, so it is your responsibility to remember the username and password you use to access your wallet(s).
+</div>
+</div>
+</div>
+
+                <div id="openWallet" class="hidden">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <p><span style="float:right;"><a href="javascript:;" id="walletLogout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></span>Welcome to your wallet, enjoy your stay!</p>
+                    </div>
+                    <div class="col-md-12" align="center">
+                      <div id="walletQrCode"></div> <br>
+                      <div>
+                        <span id="walletLoader" class="hidden"><img src="/images/loader.gif"></span>
+                        Your public address: <span id="walletAddress"></span> 
+                      </div>
+                      <br>
+                      <div style="text-align:center; width:350px;">
+                        <ul class="nav nav-pills" role="tablist">
+                          <li role="presentation" class="active"><a href="javascript:;" id="walletBalance">0.00 Raven</a></li>
+                          <li role="presentation"><a href="javascript:;" id="walletShowSpend">Spend</a></li>
+                          <li role="presentation"><a id="walletHistory" href="javascript:;" target="_blank">History</a></li>
+                          <li role="presentation"><a href="javascript:;" id="walletShowKeys">Keys</a></li>
+                        </ul>
+
+                        <br>
+
+                        <div id="walletKeys" class="hidden">
+                          <label>Public Key</label>
+                          <input class="form-control pubkey" type="text" readonly="" data-original-title="" title="">
+
+                          <label>Private key</label>
+                          <div class="input-group">
+                            <input class="form-control privkey" type="password" readonly="" data-original-title="" title="">
+
+                            <span class="input-group-btn">
+                              <button class="showKey btn btn-default" type="button">Show</button>
+                            </span>
+                          </div>
+
+                          <label>Private Key (AES256 encrypted key)</label>
+                          <input class="form-control privkeyaes" type="text" readonly="" data-original-title="" title="">
+                        </div>
+
+                        <div id="walletSpend" class="hidden">
+                          <div class="row">
+                            <div class="form-inline output">
+                              <div class="col-xs-8">
+                                <label>Address</label>
+                              </div>
+
+                              <div class="col-xs-3">
+                                <label>Amount</label>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row" id="walletSpendTo">
+                            <div class="form-horizontal output">
+                              <div class="col-xs-8">
+                                <input type="text" class="form-control addressTo" data-original-title="" title="">
+                              </div>
+                              <div class="col-xs-4">
+                                <input type="text" class="form-control amount" data-original-title="" title="" placeholder="0.00">
+
+                              </div>
+
+                              <!--a href="javascript:;" class="addressAdd"><span class="glyphicon glyphicon-plus"></span></a-->
+                              <br><br>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-xs-5  col-xs-offset-3">
+                              <label><abbr title="" data-original-title="the amount to pay in network miner fee">Transaction Fee</abbr></label>
+                              <input type="text" class="form-control" value="0.001" id="txFee" data-original-title="" title="">
+                            </div>
+                          </div>
+                          <br>
+
+                          <div id="walletSendStatus" class="alert alert-danger hidden"></div>
+
+                          <button class="btn btn-primary" type="button" id="walletSendBtn">Send</button>
+                          <button class="btn btn-default" type="button">Reset</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane tab-content" id="newAddress">
+            <h2>New Address <small>create a new address</small></h2>
+            <p>Any keys created on this page will need to be manually stored by you. They will be needed later to redeem the Ravencoins.</p>
+            <label>Address (Share this publicly)</label>
+
+            <div class="input-group">
+              <input id="newBitcoinAddress" type="text" class="form-control address" value="" readonly="" data-original-title="" title="">
+              <span class="input-group-btn">
+                <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+              </span>
+            </div>
+
+            <label>Public key (Share this publicly)</label>
+            <input id="newPubKey" type="text" class="form-control" readonly="" data-original-title="" title="">
+            <label>Private key (WIF key - Never share!)</label>
+            <div class="input-group">
+              <input id="newPrivKey" type="text" class="form-control" value="" readonly="" data-original-title="" title="">
+              <span class="input-group-btn">
+                <button class="showKey btn btn-default" type="button">Show</button>
+              </span>
+            </div>
+
+            <div id="aes256wifkey" class="hidden">
+              <label>AES-256 Encrypted WIF key</label>
+              <input id="newPrivKeyEnc" type="text" class="form-control" value="" readonly="" data-original-title="" title="">
+            </div>
+
+            <h3>Address Options</h3>
+            <p>You can use the advanced options below to generate different kind of keys and addresses.</p>
+            <div class="checkbox">
+              <label><input type="checkbox" id="newCompressed" class="checkbox-inline" checked="" data-original-title="" title=""> Compress <span class="text-muted">(recommended)</span></label>
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" id="newBrainwallet" class="checkbox-inline" data-original-title="" title="" > Custom Seed or Brain Wallet</label>
+              <input type="text" class="form-control hidden" id="brainwallet" data-original-title="" title="" placeholder="Be cautious with this feature. It has serious security ramifications. See our FAQ.">
+            </div>
+
+            <div class="checkbox">
+              <label><input type="checkbox" id="encryptKey" class="checkbox-inline" data-original-title="" title=""> Encrypt Private Key with AES-256 Password</label>
+              <div id="aes256passform" class="row hidden">
+                <div class="col-md-6">
+                  <input type="password" class="form-control" id="aes256pass" placeholder="Password" data-original-title="" title="">
+                </div>
+                <div class="col-md-6">
+                  <input type="password" class="form-control" id="aes256pass_confirm" placeholder="Confirm Password" data-original-title="" title="">
+                </div>
+              </div>
+
+              <div id="aes256passStatus" class="row hidden">
+                <div class="col-md-12">
+                  <br>
+                  <div class="alert alert-danger"> <span class="glyphicon glyphicon-exclamation-sign"></span> Your passwords do not match, please try again!</div>
+                </div>
+              </div>
+
+            </div>
+
+            <input type="button" class="btn btn-primary" value="Generate" id="newKeysBtn" data-original-title="" title="">
+            <br>
+          </div>
+
+          <div class="tab-pane tab-content" id="newMultiSig">
+            <h2>New Multisig Address <small>Secure multisig address</small></h2>
+
+            <div class="row">
+
+              <div class="col-md-8">
+                <p>Public keys can be <a href="#newAddress">generated in your browser</a> or from your Ravencoin client.</p>
+                <p>Enter the public keys of all the participants, to create a <a href="https://en.bitcoin.it/wiki/Address#Multi-signature_addresses" target="_blank">multi signature address</a>. Maximum of 15 allowed. Compressed and uncompressed public keys are accepted.</p>
+              </div>
+
+<!--
+              <div class="col-md-3">
+                <p class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span> <a href="javascript:;" data-toggle="modal" data-target="#modalMediator"><abbr data-original-title="" title="">Need a Mediator?</abbr></a></p>
+              </div>
+-->
+
+              <div class="col-md-1">
+              </div>
+            </div>
+
+            <div id="multisigPubKeys" class="row">
+              <div class="form-horizontal">
+                <div class="col-xs-11">
+                  <input type="text" class="form-control pubkey" data-original-title="" title="">
+                </div>
+                <a href="javascript:;" class="pubkeyAdd"><span class="glyphicon glyphicon-plus"></span></a>
+                <br><br>
+              </div>
+            <div class="form-horizontal">
+                <div class="col-xs-11">
+                  <input type="text" class="form-control pubkey" data-original-title="" title="">
+                </div>
+                <a href="javascript:;" class="pubkeyRemove"><span class="glyphicon glyphicon-minus"></span></a>
+                <br><br>
+              </div><div class="form-horizontal">
+                <div class="col-xs-11">
+                  <input type="text" class="form-control pubkey" data-original-title="" title="">
+                </div>
+                <a href="javascript:;" class="pubkeyRemove"><span class="glyphicon glyphicon-minus"></span></a>
+                <br><br>
+              </div></div>
+
+            <p>Enter the amount of signatures required to release the coins</p>
+            <div class="row">
+              <div class="col-xs-3">
+                <select id="releaseCoins" class="form-control">
+                  <option>1</option>
+                  <option selected="">2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                  <option>7</option>
+                  <option>8</option>
+                  <option>9</option>
+                  <option>10</option>
+                  <option>11</option>
+                  <option>12</option>
+                  <option>13</option>
+                  <option>14</option>
+                  <option>15</option>
+                </select>
+              </div>
+            </div>
+
+            <br>
+
+            <div id="multiSigErrorMsg" class="alert alert-danger" style="display:none;"></div>
+
+            <div class="alert alert-success hidden" id="multiSigData">
+              <label>Address</label>
+              <p>Payment should be made to this address:</p>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="input-group">
+                    <input type="text" class="form-control address" value="" readonly="" data-original-title="" title="">
+                    <span class="input-group-btn">
+                      <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <label>Redeem Script</label>
+              <p>This script should be <i>saved and should be shared with all the participants before a payment is made</i>, so they may validate the authenticity of the address, it will also be used later to release the Raven.</p>
+              <textarea class="form-control script" style="height:160px" readonly=""></textarea>
+              <label>Shareable URL</label>
+              <input type="text" class="scriptUrl form-control" readonly="" data-original-title="" title="">
+            </div>
+
+            <input type="button" class="btn btn-primary" value="Submit" id="newMultiSigAddress" data-original-title="" title="">
+            <br>
+          </div>
+
+                    <div class="tab-pane tab-content" id="newTimeLocked">
+                        <h2>New Time Locked Address <small>Coins can be released only after a certain date</small></h2>
+
+                        <div class="row">
+
+                            <div class="col-md-11">
+        <p>Use <i><a href="https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki" target="_blank">OP_CHECKLOCKTIMEVERIFY</a></i> (OP_HODL) to create a time locked address where the funds are unspendable until a set date and time has passed.</p>
+                                <p>Public keys can be <a href="#newAddress">generated in your browser</a> or from your Ravencoin client.</p>
+                                <p>Enter the public key that will be able to unlock the funds after the a certain date.
+                            </p></div>
+
+                            <div class="col-md-1">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-horizontal">
+                                <div class="col-xs-12">
+                                    <input id="timeLockedPubKey" type="text" class="form-control pubkey" data-original-title="" title="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <p id="timeLockedRbTypeBox">
+                          Enter the 
+                            <input type="radio" id="timeLockedRbTypeDate" name="timeLockedRbType" value="date" checked="checked" data-original-title="" title=""> 
+                            <label for="timeLockedRbTypeDate">date and time</label> 
+                            or                             
+                            <input type="radio" id="timeLockedRbTypeBlockHeight" name="timeLockedRbType" value="blockheight" data-original-title="" title="">
+                            <label for="timeLockedRbTypeBlockHeight">blockheight</label>
+
+                            required to release the coins: 
+                        </p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="input-group date" id="timeLockedDateTimePicker">
+                                        <input type="text" class="form-control" placeholder="MM/DD/YYYY hh:mm" data-original-title="" title="">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                    <div class="input-group hidden" id="timeLockedBlockHeight">
+                                        <input type="text" id="timeLockedBlockHeightVal" class="form-control" placeholder="Blockheight" data-original-title="" title="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <div id="timeLockedErrorMsg" class="alert alert-danger" style="display:none;"></div>
+
+                        <div class="alert alert-success hidden" id="timeLockedData">
+                            <label>Address</label>
+                            <p>Payment should be made to this address:</p>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control address" value="" readonly="" data-original-title="" title="">
+                                        <span class="input-group-btn">
+                                            <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <label>Redeem Script</label>
+                            <p>This script should be <i>saved and should be shared with all the participants before a payment is made</i>, so they may validate the authenticity of the address, it will also be used later to release the Raven.</p>
+                            <textarea class="form-control script" style="height:160px" readonly=""></textarea>
+                            <label>Shareable URL</label>
+                            <input type="text" class="scriptUrl form-control" readonly="" data-original-title="" title="">
+                        </div>
+
+                        <input type="button" class="btn btn-primary" value="Submit" id="newTimeLockedAddress" data-original-title="" title="">
+                        <br>
+                    </div>
+
+          <div class="tab-pane tab-content" id="newHDaddress">
+            <h2>New HD Address <small>making bip32 even easier</small></h2>
+            <p>Use the form below to generate a <i>master</i> hierarchical deterministic address.</p>
+
+            <label>xPub Address</label>
+            <div class="input-group">
+              <input id="newHDxpub" type="text" class="form-control" value="" readonly="" data-original-title="" title="">
+              <span class="input-group-btn">
+                <button class="deriveHDbtn btn btn-default" type="button"><span title="Derive from key" class="glyphicon glyphicon-chevron-right"></span></button>
+              </span>
+            </div>
+
+            <label>xPrv Address</label>
+            <div class="input-group">
+              <input id="newHDxprv" type="text" class="form-control" value="" readonly="" data-original-title="" title="">
+              <span class="input-group-btn">
+                <button class="deriveHDbtn btn btn-default" type="button"><span title="Derive from key" class="glyphicon glyphicon-chevron-right"></span></button>
+              </span>
+            </div>
+
+            <h3>Address Options</h3>
+            <p>You can use the advanced options below to generate different kinds of master addresses.</p>
+            
+            <div class="checkbox">
+              <label><input type="checkbox" id="newHDBrainwallet" class="checkbox-inline" data-original-title="" title=""> Custom Seed or Brain Wallet</label>
+              <input type="text" class="form-control hidden" id="HDBrainwallet" data-original-title="" title="">
+            </div>
+
+            <input type="button" class="btn btn-primary" value="Generate" id="newHDKeysBtn" data-original-title="" title="">
+          </div>
+
+          <div class="tab-pane tab-content" id="newTransaction">
+            <h2>Transaction <small>Create a new transaction</small></h2>
+            <p>Use this page to create a raw transaction</p>
+
+            <b>Address, WIF key or Redeem Script</b>:
+            <div class="input-group">
+              <span class="input-group-btn">
+                <button class="btn btn-info qrcodeScanner" type="button" data-toggle="modal" data-target="#modalQrcodeScanner" forward-result="#redeemFrom"><span class="glyphicon glyphicon-camera"></span></button>
+              </span>
+              <input type="text" id="redeemFrom" class="form-control" value="" data-original-title="" title="">
+              <span class="input-group-btn">
+                <button id="redeemFromBtn" class="btn btn-info" type="button">Load</button>
+              </span>
+            </div>
+
+            <br>
+
+            <div class="hidden alert alert-danger" id="redeemFromStatus"></div>
+
+            <div class="hidden alert alert-info" id="redeemFromAddress"></div>
+
+            <div>
+              <a href="javascript:;" class="optionsCollapse"><div class="well well-sm"><span class="glyphicon glyphicon-collapse-down" id="glyphcollapse"></span> Advanced Options</div></a>
+
+              <div class="hidden optionsAdvanced">
+
+                <label>Clear Inputs</label>
+                <p class="checkbox">
+                  <label><input type="checkbox" id="clearInputsOnLoad" class="checkbox-inline" checked="" data-original-title="" title=""> Clear existing inputs when new inputs are loaded.</label>
+                </p>
+
+                <hr>
+
+                <label>Null Data</label> <span class="text-muted text-normal">(80 byte limit, <i>40 bytes recommended</i>)</span>
+                <p class="checkbox">
+                  <label><input type="checkbox" id="opReturn" class="checkbox-inline" data-original-title="" title=""> Allow data to be sent within the transaction and stored in the blockchain by using <a href="https://bitcoin.org/en/developer-guide#null-data" target="_blank">OP_RETURN</a>.</label>
+                  </p><div class="text-muted">When using this option you may enter a hex string or address into the address field on the output tab.</div>
+                <p></p>
+
+                <hr>
+
+                <label>Lock Time</label>
+                <p>The <a href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number">locktime</a> indicates the earliest time a transaction can be added to the block chain.</p>
+                <input type="text" class="form-control" value="0" id="nLockTime" data-original-title="" title="">
+
+                <hr>
+              </div>
+            </div>
+
+            <ul class="nav nav-tabs" id="putTabs">
+              <li class="active"><a href="#txoutputs" data-toggle="tab">Outputs <small>(<span id="totalOutput">0.00000000</span>)</small></a></li>
+              <li><a href="#txinputs" data-toggle="tab">Inputs <small>(<span id="totalInput">0.00000000</span>)</small></a></li>
+            </ul>
+
+            <br>
+
+            <div class="tab-content">
+
+              <div class="tab-pane fade in active" id="txoutputs">
+
+                <!-- <span class="pull-right"><a href="javascript:;" id="donateTxBtn" class="btn btn-link"><span class="glyphicon glyphicon-heart"></span> Donate!</a></span> -->
+
+                <p>Enter the address and amount you wish to make a payment to.</p>
+                <div class="row">
+                  <div class="col-xs-8">
+                    <label><abbr title="" data-original-title="Address to send to">Address</abbr></label>
+                  </div>
+                  <div class="col-xs-3">
+                    <label><abbr title="" data-original-title="Amount to send">Amount</abbr></label>
+                  </div>
+                  <div class="col-xs-1">
+                  </div>
+                </div>
+
+                <div id="recipients">
+                  <div class="row recipient">
+                    <div class="col-xs-8">
+                      <input type="text" class="form-control address" placeholder="1" data-original-title="" title="">
+                    </div>
+                    <div class="col-xs-3">
+                      <input type="text" class="form-control amount" placeholder="0.00" data-original-title="" title="">
+                    </div>
+                    <div class="col-xs-1">
+                      <a href="javascript:;" class="addressAddTo"><span class="glyphicon glyphicon-plus"></span></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="tab-pane fade" id="txinputs">
+                <p>Enter the details of inputs you wish to spend.</p>
+                <div class="row">
+                  <div class="col-xs-5">
+                    <label><abbr title="" data-original-title="Transaction ID">Transaction ID:</abbr></label>
+                  </div>
+                  <div class="col-xs-1">
+                    <label><abbr title="" data-original-title="Transaction Input Number">N</abbr></label>
+                  </div>
+                  <div class="col-xs-3">
+                    <label>Script</label>
+                  </div>
+                  <div class="col-xs-2">
+                    <label><abbr title="" data-original-title="This field is for accounting purposes only - the entire input will be spent!">Amount</abbr></label>
+                  </div>
+                  <div class="col-xs-1">
+                  </div>
+                </div>
+
+                <div id="inputs">
+                  <div class="row inputs">
+                    <div class="col-xs-5">
+                      <input type="text" class="form-control txId" placeholder="" data-original-title="" title="">
+                    </div>
+                    <div class="col-xs-1">
+                      <input type="text" class="form-control txIdN" placeholder="0" data-original-title="" title="">
+                    </div>
+                    <div class="col-xs-3">
+                      <input type="text" class="form-control txIdScript" data-original-title="" title="">
+                    </div>
+                    <div class="col-xs-2">
+                      <input type="text" class="form-control txIdAmount" placeholder="0.00" data-original-title="" title="">
+                    </div>
+                    <div class="col-xs-1">
+                      <a href="javascript:;" class="txidAdd"><span class="glyphicon glyphicon-plus"></span></a>
+                      <a href="javascript:;" class="txidClear"><span class="glyphicon glyphicon-minus"></span></a>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+              <div class="col-xs-3">
+                <label><abbr title="" data-original-title="What is not spent will be used as a transaction fee, so remember to add a &quot;change address&quot;">Transaction Fee</abbr>&nbsp;&nbsp;<a href="javascript:;" id="feesestnewtx"><span class="glyphicon glyphicon-question-sign"></span></a></label>
+                <input type="text" id="transactionFee" class="form-control" value="0.0000" readonly="" data-original-title="" title="">
+              </div>
+            </div>
+
+            <br>
+
+            <div id="transactionCreateStatus" class="alert alert-danger hidden"></div>
+
+            <div id="transactionCreate" class="alert alert-success hidden">
+              <label>Transaction</label>
+              <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode" style="float:right;"><span class="glyphicon glyphicon-qrcode"></span></button>
+
+              <p>The transaction below has been generated and encoded. It can be broadcasted once it has been signed.</p>
+              <br>
+                                      <textarea class="form-control" style="height:150px" readonly=""></textarea>
+
+              <p class="text-muted">Size: <span class="txSize">0</span> <i>bytes</i></p>
+            </div>
+
+            <input type="button" value="Submit" class="btn btn-primary" id="transactionBtn" data-original-title="" title="">
+
+            <br>
+          </div>
+
+
+          <div class="tab-pane tab-content" id="fees">
+            <h2>Ravencoin Fee Calculator</h2>
+            <p>This page will give you a guide on the lowest fee to use to get your transaction included within the next few blocks. It works by predicting the size of a transaction and comparing it to another transaction in a recent block to determine an appropriate fee.</p>  
+
+            <div align="center" class="alert alert-info">
+              <h2><span class="glyphicon glyphicon-question-sign"></span> Recommended Fee: <span class="recommendedFee">0.00000000</span> Ravencoin <small> <br> for a transaction of <span class="feeTxSize">0</span> bytes</small></h2>
+              <span class="text-muted"><i><span class="feeSatByte">?</span> Sat/Byte</i></span>
+            </div>
+
+            <div id="txsliders" class="row">
+              <div class="col-md-6 txinputs">
+
+                <div align="center"><b><span class="txtotal total">0</span><br>Inputs</b></div>
+                <div id="txinputstype" align="center" class="small text-muted">
+                  <br>
+                  <span><span class="txsize">0</span> Bytes</span>
+                </div>
+
+                <h4 class="regular"><abbr title="" data-original-title="Spending from a compressed legacy address. p2pkh">Regular</abbr> <small>Compressed</small> 
+                  <span class="badge inputno" title="Number of Regular Inputs">1</span> 
+                  <small><span class="bytes">148</span> bytes</small>
+                  <small class="estimate hidden"><em> *estimate</em></small>
+                </h4> 
+
+                <div class="input-group">
+                  <span class="input-group-btn"><button class="btn sliderbtn down" type="button"><span class="glyphicon glyphicon-chevron-left"></span></button></span>
+                  <input type="range" min="0" max="100" value="1" class="slider txinput txi_regular" rel="regular" data-original-title="" title="">
+                  <span class="input-group-btn"><button class="btn sliderbtn up" type="button"><span class="glyphicon glyphicon-chevron-right"></span></button></span>
+                </div>
+
+                <h4 class="multisig"><abbr title="" data-original-title="Spending from a multisig address. p2sh">MultiSig</abbr>  
+                  <span class="badge inputno" title="Number of MultiSig Inputs">0</span>
+                  <small><span class="bytes">0</span> bytes</small>
+                  <small class="estimate hidden"><em> *estimate</em></small>
+                </h4> 
+
+                <div class="input-group">
+                  <span class="input-group-btn"><button class="btn sliderbtn down" type="button"><span class="glyphicon glyphicon-chevron-left"></span></button></span>
+                  <input type="range" min="0" max="100" value="0" class="slider txinput txi_multisig" rel="multisig" data-original-title="" title="">
+                  <span class="input-group-btn"><button class="btn sliderbtn up" type="button"><span class="glyphicon glyphicon-chevron-right"></span></button></span>
+                </div>
+
+                <h4 class="hodl"><abbr title="" data-original-title="Spending from a time locked address. p2sh">Hodl</abbr> <small>Time Locked</small> 
+                  <span class="badge inputno" title="Number of Hodl Inputs">0</span>
+                  <small><span class="bytes">0</span> bytes</small>
+                  <small class="estimate hidden"><em> *estimate</em></small>
+                </h4>
+
+                <div class="input-group">
+                  <span class="input-group-btn"><button class="btn sliderbtn down" type="button"><span class="glyphicon glyphicon-chevron-left"></span></button></span>
+                  <input type="range" min="0" max="100" value="0" class="slider txinput txi_hodl" rel="hodl" data-original-title="" title="">
+                  <span class="input-group-btn"><button class="btn sliderbtn up" type="button"><span class="glyphicon glyphicon-chevron-right"></span></button></span>
+                </div>
+
+                <h4 class="unknown"><abbr title="" data-original-title="Spending from an unrecognized input. p2sh">Unknown</abbr> 
+                  <span class="badge inputno" title="Number of Unknown Inputs">0</span>
+                  <small><span class="bytes">0</span> bytes</small>
+                  <small class="estimate hidden"><em> *estimate</em></small>
+                </h4>
+
+                <div class="input-group">
+                  <span class="input-group-btn"><button class="btn sliderbtn down" type="button"><span class="glyphicon glyphicon-chevron-left"></span></button></span>
+                  <input type="range" min="0" max="100" value="0" class="slider txinput txi_unknown" rel="unknown" data-original-title="" title="">
+                  <span class="input-group-btn"><button class="btn sliderbtn up" type="button"><span class="glyphicon glyphicon-chevron-right"></span></button></span>
+                </div>
+
+                <br>
+              </div>
+
+              <div class="col-md-6 txoutputs">
+
+                <div align="center"><b><span class="txtotal total">0</span><br>Outputs</b></div>
+                <div id="txoutputtype" align="center" class="small text-muted">
+                  <br>
+                  <span><span class="txsize">0</span> Bytes</span>
+                </div>
+
+                <h4 class="p2pkh"><abbr title="" data-original-title="A pay 2 public key hash. Starts with 1. Used with legacy addresses">Regular</abbr> <small>p2pkh (1...)</small> 
+                  <span class="badge outputno" title="Number of p2pkh Outputs">2</span> 
+                  <small><span class="bytes">68</span> bytes</small>
+                  <small class="estimate hidden"><em> *estimate</em></small>
+                </h4>   
+
+                <div class="input-group">
+                  <span class="input-group-btn"><button class="btn sliderbtn down" type="button"><span class="glyphicon glyphicon-chevron-left"></span></button></span>
+                  <input type="range" min="0" max="100" value="2" class="slider txoutput txo_p2pkh" rel="p2pkh" data-original-title="" title="">
+                  <span class="input-group-btn"><button class="btn sliderbtn up" type="button"><span class="glyphicon glyphicon-chevron-right"></span></button></span>
+                </div>
+
+                <h4 class="p2sh"><abbr title="" data-original-title="A pay 2 script hash address. Starts with a 3. For example a multisig address">Regular</abbr> <small>p2sh (3...)</small> 
+                  <span class="badge outputno" title="Number of p2sh Outputs">0</span> 
+                  <small><span class="bytes">0</span> bytes</small>
+                  <small class="estimate hidden"><em> *estimate</em></small>
+                </h4> 
+
+                <div class="input-group">
+                  <span class="input-group-btn"><button class="btn sliderbtn down" type="button"><span class="glyphicon glyphicon-chevron-left"></span></button></span>
+                  <input type="range" min="0" max="100" value="0" class="slider txoutput txo_p2sh" rel="p2sh" data-original-title="" title="">  
+                  <span class="input-group-btn"><button class="btn sliderbtn up" type="button"><span class="glyphicon glyphicon-chevron-right"></span></button></span>
+                </div>
+
+                <br>
+              </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="text-muted">Chargable Transaction Size: <span class="feeTxSize">0</span> bytes</div>
+              </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+              <div class="col-md-12 recommended">
+
+                <h3>Blockchain Data <span class="pull-right"><button type="button" id="feeStatsReload" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-refresh"></span></button></span></h3>
+
+                <p>This is based on us comparing your transaction against a very recent transaction found in a very recent block</p>
+                <p><b>Block Height</b>: <span class="blockHeight">?</span></p>
+                <p class="hideOverflow"><b>Block #</b>: <span class="blockHash">?</span></p>
+                <p><b>Block Time</b>: <span class="blockTime">?</span> <span class="blockDateTime text-muted"></span></p>
+                <p class="hideOverflow"><b>Transaction ID</b>: <span class="txId">?</span></p>
+                <p><b>Transaction Size</b>: <span class="txSize">0</span> bytes</p>
+                <p><b>Transaction Fee</b>: <span class="txFee">0.00000000</span></p>
+                <p><b>Satoshi per Byte</b>: <span class="feeSatByte">0</span></p>
+
+                <p>Based on your data and this recently mined transaction we recommend a fee of <b><span class="recommendedFee">0.00000000</span> Raven</b> to get it into the next few blocks</p>
+              </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+
+              <div class="col-md-12">
+                <a href="javascript:;" id="advancedFeesCollapse">
+                  <div class="well well-sm"><span class="glyphicon glyphicon-collapse-down"></span> Advanced Options &amp; Raw Transaction</div>
+                </a>
+              </div>
+            </div>
+
+            <div class="row hidden" id="advancedFees">
+              <div class="col-md-12">
+                <p>Enter your unsigned or signed hex encoded transaction below:</p>
+                <textarea class="form-control txhex" style="height:160px"></textarea><br>
+                <button type="button" class="btn btn-primary" id="analyseBtn">Analyse Transaction</button>
+
+                <hr>
+
+                <h4>Estimate Input Size <small>in bytes</small></h4>
+
+                <div class="form-inline">
+                  <div class="form-group">
+                    <label for="est_txi_regular">Regular</label>
+                    <input type="number" class="form-control" id="est_txi_regular" value="107" data-original-title="" title="">
+                  </div>
+                  <div class="form-group">
+                    <label for="est_txi_multisig">MultiSig</label>
+                    <input type="number" class="form-control" id="est_txi_multisig" value="351" data-original-title="" title="">
+                  </div>
+                  <div class="form-group">
+                    <label for="est_txi_hodl">Hodl</label>
+                    <input type="number" class="form-control" id="est_txi_hodl" value="78" data-original-title="" title="">
+                  </div>
+                  <div class="form-group">
+                    <label for="est_txi_unknown">Unknown</label>
+                    <input type="number" class="form-control" id="est_txi_unknown" value="512" data-original-title="" title="">
+                  </div>
+                </div>
+
+                <h4>Estimate Output Size <small> in bytes</small></h4>
+                <div class="form-inline">
+                  <div class="form-group">
+                    <label for="est_txo_p2pkh">Regular P2PKH</label>
+                    <input type="number" class="form-control" id="est_txo_p2pkh" value="25" data-original-title="" title="">
+                  </div>
+                    <div class="form-group">
+                    <label for="est_txo_p2sh">Regular P2SH</label>
+                    <input type="number" class="form-control" id="est_txo_p2sh" value="23" data-original-title="" title="">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane tab-content" id="verify">
+            <h2>Verify <small>transactions and other scripts</small></h2>
+            <div class="row">
+              <div class="col-md-12">
+                <p>Enter the raw transaction, redeem script, pubkey, hd address or wif key to convert it into a readable format that can be verified manually.</p>
+                <textarea type="text" id="verifyScript" class="form-control" style="height:125px"></textarea>
+              </div>
+            </div>
+            <br>
+
+            <div class="hidden verifyData" id="verifyRsData">
+
+              <h4>Redeem Script</h4>
+              <p><span style="float:right"><a href="javascript:;" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above redeem script has been decoded</p>
+
+              <div class="hidden" id="verifyRsDataMultisig">
+                <label>Multi Signature Address</label>
+                <div class="row">
+                      <div class="col-lg-6">
+                        <div class="input-group">
+                          <input type="text" class="form-control address multisigAddress" value="" readonly="" data-original-title="" title="">
+                          <span class="input-group-btn">
+                            <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                <label>Required Signatures</label>
+                    <p class="signaturesRequired">?</p>
+                    <label>Signatures Required from</label>
+                    <table class="table table-striped table-hover">
+                      <tbody>
+                      </tbody>
+                    </table>
+                <br>
+              </div>
+  
+              <div class="hidden verifyData" id="verifyRsDataHodl">
+                <label>Hodl Address</label>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="input-group">
+                      <input type="text" class="form-control address" value="" readonly="" data-original-title="" title="">
+                      <span class="input-group-btn">
+                        <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <label>Required Signature</label>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="input-group">
+                      <input type="text" class="form-control address pubkey" value="" readonly="" data-original-title="" title="">
+                      <span class="input-group-btn">
+                        <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <label>Unlock Time</label>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="input-group">
+                      <input type="text" class="form-control date" value="" readonly="" data-original-title="" title="">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="hidden verifyData" id="verifyTransactionData">
+              <h4>Transaction Script</h4>
+              <p><span style="float:right"><a href="https://wallet2.traysi.org/" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above script has been decoded</p>
+              <div><b>Version</b>: <span class="transactionVersion"></span></div>
+              <div><b>Transaction Size</b>: <span class="transactionSize"></span></div>
+              <div><b>Lock time</b>: <span class="transactionLockTime"></span></div>
+
+              <hr>
+
+              <label>Inputs</label>
+              <table class="table table-striped table-hover ins">
+                <thead>
+                  <tr style="font-weight:bold;">
+                    <td><abbr title="" data-original-title="the transaction id">Txid</abbr></td><td><abbr title="" data-original-title="index id of the the transaction">N</abbr></td><td><abbr title="" data-original-title="transaction script">Script</abbr></td><td><abbr title="" data-original-title="is input signed?">Signed?</abbr></td><td><abbr title="" data-original-title="is transaction a multisig transaction?">MultiSig?</abbr></td>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+
+              <label>Outputs</label>
+              <table class="table table-striped table-hover outs">
+                <thead>
+                  <tr style="font-weight:bold;">
+                    <td><abbr title="" data-original-title="address the funds are being sent to">Address</abbr></td><td><abbr title="" data-original-title="the amount the address is being sent">Amount</abbr></td><td><abbr title="" data-original-title="the script of the transaction">Script</abbr></td>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+
+
+            <div class="hidden verifyData" id="verifyPrivKey">
+              <h4>WIF key</h4>
+              <p>The above wif key has been decoded</p>
+              <p><b>Address</b>: <input type="text" class="form-control address" readonly="" data-original-title="" title=""></p>
+              <p><b>Public key</b>: <input type="text" class="form-control pubkey" readonly="" data-original-title="" title=""></p>
+              <p><b>Private key</b>: <input type="text" class="form-control privkey" readonly="" data-original-title="" title=""></p>
+              <p><b>Is compressed</b>: <span class="iscompressed"></span></p>
+
+            </div>
+
+            <div class="hidden verifyData" id="verifyPubKey">
+              <h4>Public key</h4>
+              <p><span style="float:right"><a href="https://wallet2.traysi.org/" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above public key has been encoded to its address</p>
+              <p><b>Address</b>: <input type="text" class="form-control address" readonly="" data-original-title="" title=""></p>
+
+            </div>
+
+            <div class="hidden verifyData" id="verifyHDaddress">
+              <h4>HD Address</h4>
+              <p><span style="float:right"><a href="https://wallet2.traysi.org/" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The key <small><span class="hdKey hidden"></span></small> has been decoded</p>
+              <div class="row">
+                <div class="col-md-2">
+                  <b>Type</b><br>
+                  <span class="key_type"></span>
+                </div>
+
+                <div class="col-md-5">
+                  <b>Chain Code</b><br>
+                  <input type="text" class="form-control chain_code" value="" readonly="" data-original-title="" title="">
+                </div>
+
+
+                <div class="col-md-5">
+                  <b>Key</b><br>
+                  <input type="text" class="form-control hdwifkey" value="" readonly="" data-original-title="" title="">
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-3">
+                  <b>Version</b><br>
+                  <input type="text" class="form-control version" value="" readonly="" data-original-title="" title="">
+                </div>
+
+                <div class="col-md-3">
+                  <b>Parent FingerPrint</b><br>
+                  <input type="text" class="form-control parent_fingerprint" value="" readonly="" data-original-title="" title="">
+                </div>
+
+                <div class="col-md-3">
+                  <b>Depth</b><br>
+                  <input type="text" class="form-control depth" value="" readonly="" data-original-title="" title="">
+                </div>
+
+                <div class="col-md-3">
+                  <b>Index</b><br>
+                  <input type="text" class="form-control child_index" value="" readonly="" data-original-title="" title="">
+                </div>
+              </div>
+
+              <div class="row">
+              </div>
+
+              <hr>
+
+              <h4>Key Derivation</h4>
+              <p>The path of key derivation</p>
+
+              <div class="row">
+                <div class="col-md-8">
+                  <b>Path</b><br>
+                  <select class="form-control">
+                    <option>Simple: m/i</option>
+                  </select>
+                </div>
+
+                <div class="col-md-2">
+                  <b>Index (Start)</b><br>
+                  <input type="text" class="form-control derivation_index_start" value="0" data-original-title="" title="">
+                </div>
+
+                <div class="col-md-2">
+                  <b>Index (End)</b><br>
+                  <input type="text" class="form-control derivation_index_end" value="1" data-original-title="" title="">
+                </div>
+
+              </div>
+
+              <hr>
+              <h4>Keys</h4>
+
+              <p>Keys derived from the hd address provided</p>
+
+              <div class="derived_data">
+                <table class="table table-striped table-hover">
+                  <thead>
+                    <tr><td><b>Index</b></td><td><b>Address</b></td><td><b>Private Key (WIF)</b></td><td><b>Extended xPub</b></td><td><b>Extended xPrv</b></td></tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+
+              <br>
+            </div>
+
+            <div id="verifyStatus" class="alert alert-danger hidden"><span class="glyphicon glyphicon-exclamation-sign"></span> Unable to decode</div>
+
+            <input type="button" value="Submit" class="btn btn-primary" id="verifyBtn" data-original-title="" title="">
+            <br>
+
+          </div>
+
+          <div class="tab-pane tab-content" id="sign">
+            <h2>Sign Transaction <small>once a transaction has been verified</small></h2>
+            <p>Once you have <a href="#verify">verified</a> a transaction you can sign and then <a href="#broadcast">broadcast</a> it into the network.</p>
+
+            <div class="row">
+              <div class="col-md-12">
+                <label for="signPrivateKey">Private key</label>
+
+                <div class="input-group">
+                  <input id="signPrivateKey" type="password" class="form-control" value="" data-original-title="" title="">
+                  <span class="input-group-btn">
+                    <button class="showKey btn btn-default" type="button">Show</button>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <br>
+
+            <div class="row">
+              <div class="col-md-12">
+                <textarea type="text" id="signTransaction" class="form-control" style="height:125px"></textarea>
+              </div>
+            </div>
+            <br>
+
+            <a href="javascript:;" id="signAdvancedCollapse">
+              <div class="well well-sm"><span class="glyphicon glyphicon-collapse-down"></span> Advanced Options</div>
+            </a>
+
+            <div id="signAdvanced" class="hidden">
+              <div class="row">
+                <div class="col-md-12">
+                  <label for="sighashType">Sig Hash Type</label>
+
+                  <select id="sighashType" class="form-control">
+                    <option value="1" rel="SIGHASH_ALL: Signs all the inputs and outputs, protecting everything against modification.">ALL (default)</option>
+                    <option value="2" rel="SIGHASH_NONE: Signs all of the inputs but none of the outputs, allowing anyone to change where the satoshis are going unless other signatures using other signature hash flags protect the outputs.">NONE</option>
+                    <option value="3" rel="SIGHASH_SINGLE: The only output signed is the one corresponding to this input, ensuring nobody can change your part of the transaction but allowing other signers to change their part of the transaction.">SINGLE</option>
+                    <option value="129" rel="SIGHASH_ALL|SIGHASH_ANYONECANPAY: Signs all of the outputs but only this one input, it allows anyone to add or remove other inputs, so anyone can contribute additional satoshis but they cannot change how many satoshis are sent nor where they go.">ALL|ANYONECANPAY</option>
+                    <option value="130" rel="SIGHASH_NONE|SIGHASH_ANYONECANPAY: Signs only this one input and allows anyone to add or remove other inputs or outputs, so anyone who gets a copy of this input can spend it however they&#39;d like.">NONE|ANYONECANPAY</option>
+                    <option value="131" rel="SIGHASH_SINGLE|SIGHASH_ANYONECANPAY: Signs this one input and its corresponding output. Allows anyone to add or remove other inputs.">SINGLE|ANYONECANPAY</option>
+                  </select>
+                </div>
+              </div>
+
+              <br>
+
+              <div class="alert alert-info" id="sighashTypeInfo">
+                SIGHASH_ALL: The default, signs all the inputs and outputs, protecting everything except the signature scripts against modification.
+              </div>
+            </div>
+
+            <div class="alert alert-danger hidden" id="signedDataError">
+              <span class="glyphicon glyphicon-exclamation-sign"></span> There is a problem with one or more of your inputs, please check and try again
+            </div>
+
+            <div class="alert alert-success hidden" id="signedData">
+              <label>Signed transaction</label>
+              <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode" style="float:right;"><span class="glyphicon glyphicon-qrcode"></span></button>
+              <p>The above transaction has been signed:</p>
+
+                                <textarea class="form-control script" style="height:160px" readonly=""></textarea>
+                                    
+              <p class="text-muted">Size: <span class="txSize">0</span> <i>bytes</i></p>
+            </div>
+
+            <input type="button" value="Submit" class="btn btn-primary" id="signBtn" data-original-title="" title="">
+            <br>
+          </div>
+
+          <div class="tab-pane tab-content" id="broadcast">
+            <h2>Broadcast Transaction <small>into the Ravencoin network</small></h2>
+            <a href="#settings" style="float:right;"><span class="glyphicon glyphicon-cog"></span></a>
+            <p>Enter your hex encoded Ravencoin transaction</p>
+            <textarea class="form-control" style="height:125px" id="rawTransaction"></textarea>
+            <br>
+            <div id="rawTransactionStatus" class="alert alert-danger" style="display: none;"><span class="glyphicon glyphicon-exclamation-sign"></span> There was an error submitting your request, please try again</div>
+            <input type="button" value="Submit" id="rawSubmitBtn" class="btn btn-primary" data-original-title="" title="">
+            <br>
+          </div>
+
+          <div class="tab-pane tab-content" id="dev">
+            <h2>Development <small>Javascript framework, API and more</small></h2>
+            <div class="alert alert-info">This section is currently under development and is subject to change.</div>
+            
+          </div>
+          <div class="tab-pane tab-content" id="help">
+            <h2>Frequently Asked Questions</h2>
+
+Some common questions about this service, and cryptocurrencies in general:
+
+            <h3>How does the wallet work?</h3>
+From our <a href="#wallet">Wallet Page</a>, for your first time, just pick a username and password and enter those in to create your wallet. Remember those values because you need to use the same values every time you want to re-access your wallet. It will create a single Ravencoin address that you can share with others for them to use to send coins to you.
+<br><br>
+When you first create the wallet, it will show a balance of 0 RVN. Send some coins to the address shown, and some time later you can click the "0 RVN" button to tell it to refresh the balance to get the latest information on how many coins you have.
+<br><br>
+You can send money out from that same page by clicking on the Spend link. Enter the recipient address and how much you want to send, and optionally change the fee that will be spent, and you're all done.
+
+<h3>I sent coins to my wallet, why doesn't the balance reflect the new coins right away?</h3>
+Blockchain based coins like Ravencoin operate like a ledger. Coins that are "sent" are actually transactions in the ledger, giving control of the coins from one key over to another key. This information is recorded in "blocks" that are mined by miners. Your transaction will (usually) be included in the next block that the network mines, but it will not be immediately available. It is required that at least 6 <b>additional</b> blocks be mined <u>on top of</u> the block containing your transaction, before that transaction is deemed "confirmed" and spendable. The network finds blocks on average every 60 seconds, so you shouldn't have to wait more than 6 minutes or so before your transactions are confirmed.
+<br><br>
+tldr: It might take up to 10 minutes before transactions involving your balance are updated.
+
+<h3>Under the "New" pulldown - what is all that?</h3>
+Those are features available for advanced users who understand cryptocurrencies, and wish to interact with the Ravencoin blockchain without operating a full node of their own.
+<br><br>
+You can create a new address, create transactions from that address, verify, sign and even broadcast them, all from this website. Seriously, how cool is that? One of the best features is the multi-signature addresses. You can use that to involve a third party mediator when sending funds to an untrusted person. You can send coins, and if the other guy doesn't live up to their side of the bargain, you and your mediator can simply reverse the transaction.
+<h3>Explain the security of this service</h3>
+First, we log almost nothing. We have a basic web server that logs hits to the site, but your IP address is not included in those logs. We see when someone visited the page, but that's about all we see. The server is hosted on a rackmounted colocated server that we physically control somewhere on the planet earth, and it has a self-signed SSL certificate for this domain. CloudFlare is setup to provide service to our domain, and the SSL settings are set to full. CloudFlare only accesses our server using SSL, and of course, it delivers the content on to you using their own signed SSL certificate.
+<br><br>
+The weak point to the security of this service is you and the computer you use to access this service. Your keys are generated within your browser. Our server never sees your keys. If you are interested in confirming that, you can simply view source on this website, and check out our .js files. There are a few calls to PHP scripts on our server that do things like get balances and broadcast transactions, but you will see that the private key is never sent to those scripts.
+<br><br>
+It is your responsibility to ensure that you do not have malware that is reading keys from your browser session or from your cache. It is also your responsibility to record your keys in a safe place, so that you do not lose your funds. There is no guarantee that this service will always be available to you, so keeping a personal record of your keys will ensure no loss of funds should our service be interrupted or discontinued. If you lose your keys, or forget your password, it is literally impossible for us to help you recover them.
+<h3>What is the brain wallet or custom seeds?</h3>
+That is where you can create an address using a special seed that it uses to generate the public and private key pair. Keys created using these seeds will always produce the same key, so it's a convenient way for you make keys using phrases that you might be able to memorize.
+<br><br>
+So say you want to be able to make a key and not record it <b>anywhere</b>. You could make a key using this seed being a very long and random set of words that you then memorize. Later on you can reproduce that key using those words.
+<br><br>
+Obviously, anyone who knew your phrase would be able to make the key, as well, so the security of the key is only as good as the complexity of the words/phrases that were used to generate it. There are a number of fun things you can do, such as hide a key behind a well known phrase, song lyric, or answer to a riddle.
+<h3>Why do you not use 2FA (2 Factor Authentication) anywhere on the site?</h3>
+Pocket Raven was designed to be used in such a way that no information about the user is stored on our server. 2FA would require us to maintain a database of information about our users that they would authenticate against, and therefore goes against the design principles of the service. We do not store any information about you, and therefore as far as we know, it is not possible to use 2FA with our service. If anybody knows of a way for us to provide 2FA without requiring us to store information on the user, we'd welcome that information. See below on how to contact us.
+<h3>Can I use this service for educational purposes?</h3>
+Absolutely. If you are an educator, you can find great value in leading your students through exercises involving this website. They can all create keys, verify transactions, and broadcast transactions to each other. As the teacher, you could set aside a small number of Ravencoin funds to distribute to your student's keys so they have some money to work with. Cryptocurrency is here to stay and if you have students in your care, Pocket Raven is a tremendous resource to help them learn some of the more inner workings of how the blockchain transactions work.
+
+<h3>What is the charge for this service?</h3>
+It's a free service, provided by Ravencoin community member @traysi.
+
+<h3>You totally rock, dude. Can I donate to you?</h3>
+Please do! Donations promote the further development of this service, and help mitigate the expenses we incur in offering it. Our ravencoin donation address is RTraysiFeCoWZ4y1dTWXHbdyT9Jp541fkf.
+
+<h3>Any additional questions...</h3>
+Feel free to email link@traysi.org with any additional questions, or better yet, join the <a href="https://discord.gg/PtEnyvH">Ravencoin discord group</a> and tag me there in the #thenest or #wallet-support channels.
+<br><br>
+<a href="#home">Return to the Pocket Raven homepage</a>
+
+
+
+          </div>
+
+          <div class="tab-pane tab-content" id="about">
+            <h2>Pocket Ravencoin Web Wallet</h2>
+            <h3>Information</h3>
+            <p>This web wallet is based on Coinb.in - a free and open source project originally for Bitcoin and released under the MIT license by OutCast3k in 2013.
+            <h3>Privacy</h3>
+            <p>We believe strongly in privacy. This site does not collect IP or transaction data in any way, nor do we store your Ravencoin private keys you generate here. This service exists for your convenience and as a service to the Ravencoin community. Due to the nature of how our service works, we can not help you recover lost keys that you might fail to preserve.</p>
+            <h3>Donate</h3>
+            <p>Please donate Ravencoins to RTraysiFeCoWZ4y1dTWXHbdyT9Jp541fkf if you found this service useful and/or want to see more features!</p>
+<a href="#home">Visit our homepage</a> or <a href="#help">Read our FAQ</A>
+          </div>
+
+          <br>
+          <br>
+
+        </div>
+      </div>
+    </div>
+
+    <div id="footer">
+      <div class="container text-right">
+        <p class="text-muted">Pocket Raven Donations: RTraysiFeCoWZ4y1dTWXHbdyT9Jp541fkf</p>
+      </div>
+    </div>
+
+  <!-- wallet confirm send modal -->
+  <div class="modal fade" id="modalWalletConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">Please confirm</h4>
+        </div>
+
+        <div class="modal-body">
+          <p>You are about to send a transaction to <span id="recipient_addr">someone</span> with the value of <span id="spendAmount">0.00</span> Ravencoin.</p>
+
+          <br>
+          <div id="walletSendConfirmStatus" class="alert alert-danger hidden"></div>
+
+          <div id="walletSendFailTransaction" class="alert alert-info hidden">
+            <b>Raw Transaction:</b>
+            <p>Below is a copy of the transaction we tried to submit</p>
+            <textarea class="form-control" readonly=""></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <span id="sendBtnLoader" class="hidden"><img src="/images/loader.gif"></span> <button type="button" class="btn btn-primary" id="walletConfirmSend">Send</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal" id="confirmClose">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- wallet confirm send modal -->
+
+  <!-- qrcode modal -->
+  <div class="modal fade" id="modalQrcode" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">qrcode</h4>
+        </div>
+
+        <div class="modal-body" align="center">
+          <div id="qrcode"></div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" id="qrCodeClose">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- qrcode modal -->
+
+  <!-- qrcode scanner modal -->
+  <div class="modal fade" id="modalQrcodeScanner" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">qrcode scanner</h4>
+        </div>
+
+        <div class="modal-body" align="center">
+          <select id="videoSource" class="form-control"></select>
+          <div id="videoReaderError" class="hidden">Your browser does not offer camera support</div>
+          <video id="videoReader" muted="" autoplay="" style="width:100%;height:100%"></video>
+          <div id="qrcode-scanner-callback-to" class="hidden"></div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" id="qrScanClose">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- qrcode scanner modal -->
+
+  <!-- mediator modal -->
+  <div class="modal fade" id="modalMediator" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h4 class="modal-title">Transaction Mediation</h4>
+        </div>
+
+        <div class="modal-body">
+          <p>You can add a public key when creating a <i>2-of-3 multi signature address</i> and for a low fee your mediator will help with the recovery of the funds should any disputes arise.</p>
+
+          <p>Should a dispute arise please contact the below address for further information</p>
+          <div class="row">
+            <div class="col-md-5">
+              <label>Mediator:</label>
+
+              <!-- 
+                You need to contact us before adding your pubkey 
+                and submitting a pull request on github. 
+
+                format is: pubkey;email;fee
+              -->
+
+              <select id="mediatorList" class="form-control">
+                <option value="02b6231cc602740c29436eafbb6448880f4058cc3d2745c709deee313104678277;support@coinb.in;1">Coinb.in</option>
+              </select>
+            </div>
+
+            <div class="col-md-5">
+              <label>Address:</label> <span class="text-muted">(for disputes)</span>
+              <input id="mediatorEmail" type="text" class="form-control address" value="" readonly="" data-original-title="" title="">  
+            </div>
+
+            <div class="col-md-2">
+              <label>Fee (%):</label> 
+              <input id="mediatorFee" type="text" class="form-control address" value="" readonly="" data-original-title="" title="">  
+            </div>
+
+          </div>
+          <br>
+
+          <label>Public Key:</label>
+          <input id="mediatorPubkey" type="text" class="form-control address" value="" readonly="" data-original-title="" title="">
+          <br>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-primary" type="button" id="mediatorAddKey">Add Public Key</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal" id="mediatorClose">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- mediator modal -->
+
+
+  <!-- warning (fee) modal -->
+  <div class="modal fade" id="modalWarningFee" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h4 class="modal-title"><b>Warning High Fee!</b></h4>
+        </div>
+
+        <div class="modal-body">
+          Please be aware that you have created a transaction with what seems to be a very high fee of <span id="modalWarningFeeAmount"></span> Raven!
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" id="warningFeeClose">OK, I've got it!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- warning (fee) modal -->
+
+  <div class="hidden" id="entropybucket">64c5c4de57f52dfcee14ec15a9a8a23587237f167e13780d820992054b00326c86da1edbbcb4aca5c7b3e1cbf9e60b04483a4d3f4741ba0aaaffa102840849fd</div>
+</body></html>
