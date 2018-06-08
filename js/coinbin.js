@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
   /* open wallet code */
-  var explorer_addr = "https://ravencoin.network/address/"
+  var explorer_addr = "https://rvn.traysi.org/address/"
   var wallet_timer = false;
 
   $("#openBtn").click(function(){
