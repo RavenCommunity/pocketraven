@@ -118,7 +118,7 @@ console.log("Finished wallet spend");
 
     var sequence = false;
 
-    tx.addUnspent($("#walletAddress").html(), function(data){
+    tx.addUnspent($("#walletAddress").html(), total, function(data){
 console.log("Going into tx.addUnspent"+data.value);
 
       var dvalue = (data.value).toFixed(8) * 1;
