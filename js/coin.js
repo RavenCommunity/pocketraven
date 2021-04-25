@@ -746,41 +746,9 @@
     r.parse();
     return r;
   }
-  
-  coinjs.cpmareUnspents = function( unspent1, unspent2){
-	  return ( unspent1.amount - unspent2.amount);
-  }
- 
-  coinjs.partition = function(arr, start, end, compare){
-    const pivot = arr[end];
-    let pIndex = start; 
-    for (let i = start; i < end; i++) {
-        if (compare(arr[i] , pivot) < 0 ) {
-        // Swap
-        [arr[i], arr[pivotIndex]] = [arr[pivotIndex], arr[i]];
-        pIndex++;
-        }
-    }
-    
-    [arr[pIndex], arr[end]] = [arr[end], arr[pIndex]] 
-    return pivotIndex;
-};
-
-coinjs.qSort = function(arr, start, end, compare) {
-    // terminating condition
-    if (start >= end) {
-        return;
-    }
-    let index = partition(arr, start, end, compare);
-    
-    // Recursively apply the same logic to the left and right subarrays
-    qSort(arr, start, index - 1, compare);
-    qSort(arr, index + 1, end, compare);
-}
-
 
   /* start of transaction functions */
-   
+
   /* create a new transaction object */
   coinjs.transaction = function() {
 
@@ -873,7 +841,7 @@ coinjs.qSort = function(arr, start, end, compare) {
     }
 
     /* add unspent to transaction */
-    r.addUnspent = function(address, amount, callback, script, sequence){
+    r.addUnspent = function(address, callback, script, sequence){
       var self = this;
       this.listUnspent(address, function(data){
 
@@ -884,9 +852,9 @@ coinjs.qSort = function(arr, start, end, compare) {
         var x = {};
 
         var unspent = JSON.parse(data);
-	console.log("Unspent is:"+unspent);
-		qSort(unspent, 0, unspent.length, compareUnspents);
-        for(i=0;i<=unspent.length-1 && value < amount;i++){
+	console.log("Unspent is"+unspent);
+
+        for(i=0;i<=unspent.length-1;i++){
           var txhash = unspent[i].txid,
             n = unspent[i].vout,
             scr = unspent[i].scriptPubKey,
@@ -906,10 +874,10 @@ coinjs.qSort = function(arr, start, end, compare) {
     }
 
     /* add unspent and sign */
-    r.addUnspentAndSign = function(wif, amount, callback){
+    r.addUnspentAndSign = function(wif, callback){
       var self = this;
       var address = coinjs.wif2address(wif);
-      self.addUnspent(address['address'], amount, function(data){
+      self.addUnspent(address['address'], function(data){
         self.sign(wif);
         return callback(data);
       });
