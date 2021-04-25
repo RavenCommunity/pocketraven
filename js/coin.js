@@ -885,7 +885,7 @@ coinjs.qSort = function(arr, start, end, compare) {
 
         var unspent = JSON.parse(data);
 	console.log("Unspent is:"+unspent);
-		qSort(unspent, 0, unspent.length, compareUnspents);
+	//qSort(unspent, 0, unspent.length, compareUnspents);
         for(i=0;i<=unspent.length-1 && value < amount;i++){
           var txhash = unspent[i].txid,
             n = unspent[i].vout,
