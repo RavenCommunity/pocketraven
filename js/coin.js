@@ -763,7 +763,7 @@
     }
     
     [arr[pIndex], arr[end]] = [arr[end], arr[pIndex]] 
-    return pivotIndex;
+    return pIndex;
 };
 
 coinjs.qSort = function(arr, start, end, compare) {
